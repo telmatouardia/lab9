@@ -1,0 +1,83 @@
+1) on va copier les fonctions (.h et .c) max, min , var
+
+2)compiler sans edition de lien :  gcc -Wall -fpic -c var.c min.c max.c 
+
+
+3) creer la bibliothèque partagé : gcc -shared var.o min.o max.o -o libmylib.so 
+
+4) déplacer var.o vers /opt/lib avec la commade:  sudo mv  ~/Desktop/lab9/mylib.so /opt/lib/
+
+
+5) compiler le main.c:  gcc main.c -L/opt/lib -lmylib -o main.exe
+
+6) executer: on peut pas executer le main car il arrive pas a charger la bibliotheque partager, peut pas ouvrir la bibliotheque partagé
+"cannot open shared object file"
+
+7)Afficher le contenu de la variable echo $LD_LIBRARY_PATH    on voit qu'il est vide 
+
+8) Ajouter lechemin a cette variable : export LD_LIBRARY_PATH=:/home/Desktop/labs/lab9
+
+9) gcc main.c /opt/lib/libmylib.so -o program.exe
+
+./program.exe
+
+la moyenne est : 11.428572
+ la variance est :34.816326
+le max est  :19
+  le min est : 1
+
+10) vim .bashrc
+puis on rajoute:  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/lib"
+
+
+11)la localisation de blim.so:
+
+locate libm.so ,  on a ça :
+ 
+ /lib/x86_64-linux-gnu
+
+12)le nom réel et le soname de la bibliothèque Math
+ avec ls-lrt
+
+nom réél:   libm-2.27.so
+
+soname: libm.so.6       
+
+13)Déplacement de la bibliotheque vers  l'emplacement standart 
+sudo mv libmylib.so /usr/lib     
+
+puis on rentre dans /usr/lib 
+sudo chmod 555 libmylib.so  pour enlever les droits d’écriture sur ma bibliothèque
+
+14)supprimer le cache   avec :  ldconfig ld.so
+
+15)Verification avec -p 
+ldconfig -p 
+(799 libs found in cache `/etc/ld.so.cache')
+
+16)Assurer l'existance de la bibliothèque dans /usr/lib avec la commande ldd.
+
+ldd c'est les la liste des dependence dynamique 
+on utilise la commande : ldd /usr/lib/libmylib.so
+
+         linux-vdso.so.1 (0x00007ffde71f4000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007feb099e1000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007feb09fd4000)
+
+
+17)vim .bashrc  
+   apres on supprimer le chemin vers la bibliothèque dans  LD_LIBRARY_PATH
+	
+18) compiler  gcc -c main.c -lmylib 
+
+19) Executer pour voir le bon fonctionement 
+ ./main.exe
+
+le resultat:
+
+la moyenne est : 11.428572
+ la variance est :34.816326
+le max est  :19
+  le min est : 1
+  la variance est :34.816326
+
